@@ -14,8 +14,7 @@ function ProductRow({product}) {
     return <>
         <tr>
             <td>
-                {product.name}
-            </td>
+                {product.stocked ? product.name : <div style={{color: "red"}}>{product.name}</div>}            </td>
             <td>
                 {product.price}
             </td>
