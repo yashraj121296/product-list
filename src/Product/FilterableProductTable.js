@@ -55,18 +55,23 @@ function ProductTable({products, searchText, onlyShowInStock}) {
     </>;
 }
 
+function InStockCheckBox({onlyShowInStock, setOnlyShowInStock}) {
+    return <div>
+        <input id="onlyShowInStock" value={onlyShowInStock} onChange={event => {
+            event.target.value === "false" ? setOnlyShowInStock("true") : setOnlyShowInStock("false")
+        }}
+               type={"checkbox"}/>
+        <label htmlFor="onlyShowInStock">Only show product in stock</label>
+    </div>;
+}
+
+
 function SearchBar({searchText, setSearchText, onlyShowInStock, setOnlyShowInStock}) {
     return <>
         <div>
             <input value={searchText} onChange={event => setSearchText(event.target.value)} placeholder={'search'}/>
         </div>
-        <div>
-            <input id='onlyShowInStock' value={onlyShowInStock} onChange={event => {
-                event.target.value === "false" ? setOnlyShowInStock("true") : setOnlyShowInStock("false")
-            }}
-                   type={"checkbox"}/>
-            <label htmlFor='onlyShowInStock'>Only show product in stock</label>
-        </div>
+        <InStockCheckBox onlyShowInStock={onlyShowInStock} setOnlyShowInStock={setOnlyShowInStock}/>
     </>
 }
 
