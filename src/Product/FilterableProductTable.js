@@ -1,4 +1,5 @@
 import './Style.css'
+import {useState} from "react";
 
 function ProductCategoryRow({category}) {
     return <tr>
@@ -25,11 +26,13 @@ function ProductRow({product}) {
 
 ProductRow.propTypes = {};
 
-function ProductTable({products}) {
+function ProductTable({products,searchText}) {
 
     const categories = new Set()
     // eslint-disable-next-line array-callback-return
     products.map(it => {categories.add(it.category)})
+
+    products = searchText===""? products :products.filter((products)=>products.name.includes(searchText))
 
     return <>
         <tr>
@@ -51,9 +54,9 @@ function ProductTable({products}) {
     </>;
 }
 
-function SearchBar() {
+function SearchBar({searchText,setSearchText}) {
     return <>
-        <div><input placeholder={'search'}/></div>
+        <div><input value={searchText} onChange={event => setSearchText(event.target.value)} placeholder={'search'}/></div>
         <div><input type={"checkbox"}/>Only show product in stock</div>
     </>
 }
@@ -61,9 +64,12 @@ function SearchBar() {
 
 
 function FilterableProductTable({products}) {
+
+    const [searchText,setSearchText] = useState("")
+
     return <>
-        <SearchBar></SearchBar>
-        <ProductTable products={products}></ProductTable>
+        <SearchBar searchText={searchText} setSearchText={setSearchText} ></SearchBar>
+        <ProductTable products={products} searchText={searchText} ></ProductTable>
     </>
 }
 
