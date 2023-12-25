@@ -1,5 +1,7 @@
 import './Style.css'
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import useGetProduct from "./hooks/getProduct";
+import {MdDelete} from "react-icons/md";
 
 function ProductCategoryRow({category}) {
     return <tr>
@@ -9,14 +11,22 @@ function ProductCategoryRow({category}) {
     </tr>
 }
 
-function ProductRow({product}) {
+function ProductRow({product, products, updateProducts}) {
+
+    //TODO: move to main component i.e FilterableProductTable
+    function deleteProduct(name) {
+        updateProducts(products.filter(products => products.name !== name))
+    }
 
     return <>
         <tr>
             <td>
                 {product.stocked ? product.name : <div style={{color: "red"}}>{product.name}</div>} </td>
-            <td>
+            <td align={"center"}>
                 {product.price}
+            </td>
+            <td>
+                <MdDelete color={"red"} onClick={() => deleteProduct(product.name)}></MdDelete>
             </td>
         </tr>
 
@@ -24,7 +34,7 @@ function ProductRow({product}) {
 }
 
 
-function ProductTable({products, searchText, onlyShowInStock}) {
+function ProductTable({products, searchText, onlyShowInStock, updateProducts}) {
 
     const categories = new Set()
     // eslint-disable-next-line array-callback-return
@@ -46,7 +56,8 @@ function ProductTable({products, searchText, onlyShowInStock}) {
                     <ProductCategoryRow category={category}></ProductCategoryRow>
                     {
                         products.map(product =>
-                            (product.category === category ? <ProductRow product={product}></ProductRow> : null)
+                            (product.category === category ? <ProductRow product={product} products={products}
+                                                                         updateProducts={updateProducts}></ProductRow> : null)
                         )
                     }
                 </>
@@ -76,16 +87,26 @@ function SearchBar({searchText, setSearchText, onlyShowInStock, setOnlyShowInSto
 }
 
 
-function FilterableProductTable({products}) {
+function FilterableProductTable() {
 
     const [searchText, setSearchText] = useState("")
     const [onlyShowInStock, setOnlyShowInStock] = useState("false")
+    const [products, updateProducts] = useState([])
 
+    //TODO: Add dependency array
+    useEffect(() => {
+        async function FetchData() {
+            updateProducts(await useGetProduct())
+        }
+
+        FetchData()
+    }, [])
 
     return <>
         <SearchBar searchText={searchText} setSearchText={setSearchText} onlyShowInStock={onlyShowInStock}
                    setOnlyShowInStock={setOnlyShowInStock}></SearchBar>
-        <ProductTable products={products} searchText={searchText} onlyShowInStock={onlyShowInStock}></ProductTable>
+        <ProductTable products={products} searchText={searchText} onlyShowInStock={onlyShowInStock}
+                      updateProducts={updateProducts}></ProductTable>
     </>
 }
 
