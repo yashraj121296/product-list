@@ -1,6 +1,6 @@
 import './Style.css'
 import {useEffect, useState} from "react";
-import useGetProduct from "./hooks/getProduct";
+import {useGetProduct, useDeleteProduct} from "./hooks/api";
 import {MdDelete} from "react-icons/md";
 
 function ProductCategoryRow({category}) {
@@ -14,8 +14,9 @@ function ProductCategoryRow({category}) {
 function ProductRow({product, products, updateProducts}) {
 
     //TODO: move to main component i.e FilterableProductTable
-    function deleteProduct(name) {
+    function DeleteProduct(name) {
         updateProducts(products.filter(products => products.name !== name))
+        useDeleteProduct(name);
     }
 
     return <>
@@ -26,7 +27,7 @@ function ProductRow({product, products, updateProducts}) {
                 {product.price}
             </td>
             <td>
-                <MdDelete color={"red"} onClick={() => deleteProduct(product.name)}></MdDelete>
+                <MdDelete color={"red"} onClick={() => DeleteProduct(product.name)}></MdDelete>
             </td>
         </tr>
 
