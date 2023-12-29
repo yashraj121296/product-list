@@ -2,12 +2,89 @@ import './Style.css'
 import {useEffect, useState} from "react";
 import {useGetProduct, useDeleteProduct} from "./hooks/api";
 import {MdDelete} from "react-icons/md";
+import {RiPlayListAddFill} from "react-icons/ri";
+import ReactModal from 'react-modal';
+import Switch from "react-switch";
+
+
+function NewProductForm({updateOpenNewForm}) {
+    const [inStock, updateInStock] = useState(false)
+
+    function handleSubmit(e) {
+        e.preventDefault();
+        console.log(e.target.elements.name.value)
+        console.log(e.target.elements.price.value)
+        console.log(e.target.elements.category.value)
+        console.log(e.target.elements.stocked.value)
+        updateOpenNewForm(false);
+    }
+
+    return <form onSubmit={handleSubmit}>
+        <tr>
+            <td><label>Product name </label></td>
+            <td><input type={"text"} name={"name"} placeholder={"name"}/></td>
+        </tr>
+        <tr>
+            <td><label>Product price </label></td>
+            <td><input type={"number"} name={"price"} placeholder={"price"}/></td>
+        </tr>
+        <tr>
+            <td><label htmlFor={"category"}>Product category </label></td>
+            <td><select name={"category"}>
+                <option value="Fruit">Fruit</option>
+                <option value="Vegetable">Vegetable</option>
+            </select></td>
+        </tr>
+        <tr>
+            <label> <span>Is Stocked</span><br/>
+                <Switch height={25} checked={inStock} name={"stocked"} onChange={(event) => updateInStock(event)}/>
+            </label>
+        </tr>
+        <div align={"center"}>
+            <button type={"submit"}>Submit</button>
+            <button onClick={() => updateOpenNewForm(false)} style={{marginLeft: 20}}>Close</button>
+        </div>
+    </form>;
+}
 
 function ProductCategoryRow({category}) {
+
+    const [openNewForm, updateOpenNewForm] = useState(false)
+
     return <tr>
-        <th align={"left"}>
+        <th align={"left"} className={".category-header"}>
             {category}
+            <RiPlayListAddFill className={"add-icon"} onClick={() => {
+                updateOpenNewForm(true)
+            }}></RiPlayListAddFill>
+            <ReactModal style={{
+                overlay: {
+                    position: 'fixed',
+                    top: 100,
+                    left: 100,
+                    right: 100,
+                    bottom: 100,
+                    backgroundColor: 'rgba(255, 255, 255, 0.75)'
+                },
+                content: {
+                    position: 'absolute',
+                    top: '50px',
+                    left: '100px',
+                    right: '40px',
+                    bottom: '40px',
+                    border: '1px solid #ccc',
+                    background: '#fff',
+                    overflow: 'auto',
+                    WebkitOverflowScrolling: 'touch',
+                    borderRadius: '0px',
+                    outline: 'none',
+                    padding: '20px'
+                }
+            }} isOpen={openNewForm}>
+                <NewProductForm updateOpenNewForm={updateOpenNewForm}/>
+            </ReactModal>
         </th>
+
     </tr>
 }
 
@@ -37,7 +114,7 @@ function ProductRow({product, products, updateProducts}) {
 
 function ProductTable({products, searchText, onlyShowInStock, updateProducts}) {
 
-    if(!products){
+    if (!products) {
         return <div>No Products available</div>
     }
     const categories = new Set()
