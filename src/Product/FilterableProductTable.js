@@ -37,6 +37,9 @@ function ProductRow({product, products, updateProducts}) {
 
 function ProductTable({products, searchText, onlyShowInStock, updateProducts}) {
 
+    if(!products){
+        return <div>No Products available</div>
+    }
     const categories = new Set()
     // eslint-disable-next-line array-callback-return
     products.map(it => {
