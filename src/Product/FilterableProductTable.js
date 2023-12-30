@@ -1,6 +1,6 @@
 import './Style.css'
 import {useEffect, useState} from "react";
-import {useGetProduct, useDeleteProduct} from "./hooks/api";
+import {useAddProduct, useDeleteProduct, useGetProduct} from "./hooks/api";
 import {MdDelete} from "react-icons/md";
 import {RiPlayListAddFill} from "react-icons/ri";
 import ReactModal from 'react-modal';
@@ -10,29 +10,31 @@ import Switch from "react-switch";
 function NewProductForm({updateOpenNewForm}) {
     const [inStock, updateInStock] = useState(false)
 
-    function handleSubmit(e) {
+    function HandleSubmit(e) {
         e.preventDefault();
-        console.log(e.target.elements.name.value)
-        console.log(e.target.elements.price.value)
-        console.log(e.target.elements.category.value)
-        console.log(e.target.elements.stocked.value)
+        useAddProduct([{
+            name: e.target.elements.name.value,
+            price: parseFloat(e.target.elements.price.value),
+            category: e.target.elements.category.value,
+            stocked: inStock
+        }])
         updateOpenNewForm(false);
     }
 
-    return <form onSubmit={handleSubmit}>
+    return <form onSubmit={HandleSubmit}>
         <tr>
             <td><label>Product name </label></td>
-            <td><input type={"text"} name={"name"} placeholder={"name"}/></td>
+            <td><input autoComplete={"off"} required={true} type={"text"} name={"name"} placeholder={"name"}/></td>
         </tr>
         <tr>
             <td><label>Product price </label></td>
-            <td><input type={"number"} name={"price"} placeholder={"price"}/></td>
+            <td><input required={true} type={"number"} name={"price"} placeholder={"price"}/></td>
         </tr>
         <tr>
-            <td><label htmlFor={"category"}>Product category </label></td>
+            <td><label>Product category </label></td>
             <td><select name={"category"}>
-                <option value="Fruit">Fruit</option>
-                <option value="Vegetable">Vegetable</option>
+                <option value="Fruits">Fruits</option>
+                <option value="Vegetables">Vegetables</option>
             </select></td>
         </tr>
         <tr>
@@ -81,7 +83,7 @@ function ProductCategoryRow({category}) {
                     padding: '20px'
                 }
             }} isOpen={openNewForm}>
-                <NewProductForm updateOpenNewForm={updateOpenNewForm}/>
+                <NewProductForm category={category} updateOpenNewForm={updateOpenNewForm}/>
             </ReactModal>
         </th>
 
